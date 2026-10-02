@@ -8,7 +8,8 @@
     running with Mcp:Enabled.
 
     The key is taken from -Key, else the RAYTRACING_MCP_KEY environment variable, else
-    Mcp:ApiKeys:0:Key in this user's secrets store. It is never printed.
+    Mcp:ApiKeys:0:Key in this user's secrets store. Only its source and length are printed unless
+    -ShowKey is given.
 
     stdout is read line by line while the requests are written: the tool list is a few hundred
     KB, more than a pipe buffer holds, so a reader that waits for the end deadlocks the launcher.
@@ -19,6 +20,8 @@
     .\scripts\test-mcp-stdio.ps1 -LauncherPath C:\Tools\raytracing-mcp\PovCliNet.McpStdio.exe -ShowTools
 .EXAMPLE
     .\scripts\test-mcp-stdio.ps1 -NoKey     # expect a 401: proves the server is enforcing keys
+.EXAMPLE
+    .\scripts\test-mcp-stdio.ps1 -ShowKey   # also print the key in plain text
 #>
 [CmdletBinding()]
 param(
@@ -28,7 +31,8 @@ param(
     [string] $Toolsets       = '',
     [int]    $TimeoutSeconds = 30,
     [switch] $ShowTools,
-    [switch] $NoKey
+    [switch] $NoKey,
+    [switch] $ShowKey
 )
 
 $ErrorActionPreference = 'Stop'
@@ -75,6 +79,7 @@ if ([string]::IsNullOrEmpty($Key)) {
 }
 else {
     Write-Step ("Key      : from {0} ({1} chars)" -f $keySource, $Key.Length)
+    if ($ShowKey) { Write-Step ("Key value: {0}" -f $Key) 'Yellow' }
 }
 $effectiveUrl = if ($Url) { $Url } else { 'http://localhost:5184/mcp (launcher default)' }
 Write-Step "Url      : $effectiveUrl"
