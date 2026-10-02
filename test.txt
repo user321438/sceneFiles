@@ -1,0 +1,4 @@
+.\scripts\test-mcp-stdio.ps1                 # normal test
+.\scripts\test-mcp-stdio.ps1 -ShowTools      # also list the tool names
+.\scripts\test-mcp-stdio.ps1 -NoKey          # expect a 401
+.\scripts\test-mcp-stdio.ps1 -Key '<key>' -Url http://localhost:5184/mcp -Toolsets charts,render
